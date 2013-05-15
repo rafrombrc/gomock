@@ -55,7 +55,10 @@
 //	- Handle different argument/return types (e.g. ..., chan, map, interface).
 package gomock
 
-import "sync"
+import (
+	"runtime/debug"
+	"sync"
+)
 
 // A TestReporter is something that can be used to report test failures.
 // It is satisfied by the standard library's *testing.T.
@@ -106,7 +109,9 @@ func (ctrl *Controller) Call(receiver interface{}, method string, args ...interf
 
 	expected := ctrl.expectedCalls.FindMatch(receiver, method, args)
 	if expected == nil {
-		ctrl.t.Fatalf("no matching expected call: %T.%v(%v)", receiver, method, args)
+		stack := debug.Stack()
+		ctrl.t.Fatalf("Missing EXPECT() for invoked function: %T.%v(%v)\n%s\n",
+			receiver, method, args, string(stack))
 	}
 
 	// Two things happen here:
@@ -151,7 +156,8 @@ func (ctrl *Controller) Finish() {
 		for _, calls := range methodMap {
 			for _, call := range calls {
 				if !call.satisfied() {
-					ctrl.t.Errorf("missing call(s) to %v", call)
+					ctrl.t.Errorf("missing call(s) to %v\n%s\n", call,
+						string(debug.Stack()))
 					failures = true
 				}
 			}
