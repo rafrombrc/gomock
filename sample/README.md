@@ -1,4 +1,4 @@
-This directory contains an example of a package containing a non-trivial
+kThis directory contains an example of a package containing a non-trivial
 interface that can be mocked with GoMock. The interesting files are:
 
  *  `user.go`: Source code for the sample package, containing interfaces to be
@@ -13,4 +13,4 @@ interface that can be mocked with GoMock. The interesting files are:
 
 To run the test,
 
-    go test code.google.com/p/gomock/sample
+    go test github.com/rafrombrc/gomock/sample

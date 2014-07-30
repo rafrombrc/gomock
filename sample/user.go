@@ -17,10 +17,10 @@ import (
 
 // Dependencies outside the standard library.
 import (
-	"code.google.com/p/gomock/sample/imp1"
-	renamed2 "code.google.com/p/gomock/sample/imp2"
-	. "code.google.com/p/gomock/sample/imp3"
-	"code.google.com/p/gomock/sample/imp4" // calls itself "imp_four"
+	"github.com/rafrombrc/gomock/sample/imp1"
+	renamed2 "github.com/rafrombrc/gomock/sample/imp2"
+	. "github.com/rafrombrc/gomock/sample/imp3"
+	"github.com/rafrombrc/gomock/sample/imp4" // calls itself "imp_four"
 )
 
 // A bizarre interface to test corner cases in mockgen.

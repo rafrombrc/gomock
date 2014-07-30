@@ -19,7 +19,7 @@ import (
 	"reflect"
 	"testing"
 
-	"code.google.com/p/gomock/gomock"
+	"github.com/rafrombrc/gomock/gomock"
 )
 
 type ErrorReporter struct {
