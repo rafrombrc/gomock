@@ -52,6 +52,15 @@ func TestRemember(t *testing.T) {
 	if calledString != "blah" {
 		t.Fatalf(`Uh oh. %q != "blah"`, calledString)
 	}
+
+	// Use Do with a nil arg.
+	mockIndex.EXPECT().Put("nil-key", gomock.Any()).Do(func(key string, value interface{}) {
+		if value != nil {
+			t.Errorf("Put did not pass through nil; got %v", value)
+		}
+	})
+	mockIndex.EXPECT().NillableRet()
+	user.Remember(mockIndex, []string{"nil-key"}, []interface{}{nil})
 }
 
 func TestGrabPointer(t *testing.T) {
@@ -80,4 +89,15 @@ func TestEmbeddedInterface(t *testing.T) {
 	mockEmbed.EmbeddedMethod()
 	var emb imp1.ForeignEmbedded = mockEmbed // also does interface check
 	emb.ForeignEmbeddedMethod()
+}
+
+func TestExpectTrueNil(t *testing.T) {
+	// Make sure that passing "nil" to EXPECT (thus as a nil interface value),
+	// will correctly match a nil concrete type.
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockIndex := mock_user.NewMockIndex(ctrl)
+	mockIndex.EXPECT().Ptr(nil) // this nil is a nil interface{}
+	mockIndex.Ptr(nil)          // this nil is a nil *int
 }
