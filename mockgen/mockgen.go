@@ -30,11 +30,11 @@ import (
 	"strings"
 	"unicode"
 
-	"code.google.com/p/gomock/mockgen/model"
+	"github.com/rafrombrc/gomock/mockgen/model"
 )
 
 const (
-	gomockImportPath = "code.google.com/p/gomock/gomock"
+	gomockImportPath = "github.com/rafrombrc/gomock/gomock"
 )
 
 var (
