@@ -20,6 +20,8 @@ import (
 	"strings"
 )
 
+const NoLimit = 1e8 // close enough to infinity
+
 // Call represents an expected call to a mock.
 type Call struct {
 	t TestReporter // for triggering test failures on invalid call setup
@@ -42,7 +44,7 @@ type Call struct {
 }
 
 func (c *Call) AnyTimes() *Call {
-	c.minCalls, c.maxCalls = 0, 1e8 // close enough to infinity
+	c.minCalls, c.maxCalls = 0, NoLimit
 	return c
 }
 
@@ -90,6 +92,12 @@ func (c *Call) Return(rets ...interface{}) *Call {
 
 func (c *Call) Times(n int) *Call {
 	c.minCalls, c.maxCalls = n, n
+	return c
+}
+
+// WithinTimes specifies an acceptable range for the number of calls.
+func (c *Call) WithinTimes(min, max int) *Call {
+	c.minCalls, c.maxCalls = min, max
 	return c
 }
 

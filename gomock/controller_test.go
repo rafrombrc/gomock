@@ -198,6 +198,27 @@ func TestUnexpectedArgCount(t *testing.T) {
 	})
 }
 
+func TestWithinTimes(t *testing.T) {
+	rep, ctrl := createFixtures(t)
+
+	s := new(Subject)
+	ctrl.RecordCall(s, "FooMethod", "arg").WithinTimes(3, 5)
+	ctrl.Call(s, "FooMethod", "arg")
+	ctrl.Call(s, "FooMethod", "arg")
+	ctrl.Call(s, "FooMethod", "arg")
+	rep.assertPass("After minimum number of method calls.")
+
+	ctrl.Call(s, "FooMethod", "arg")
+	ctrl.Call(s, "FooMethod", "arg")
+	rep.assertPass("After maximum number of method calls.")
+
+	rep.assertFatal(func() {
+		ctrl.Call(s, "FooMethod", "argument")
+	})
+	ctrl.Finish()
+	rep.assertFail("After exceeding maximum method calls.")
+}
+
 func TestAnyTimes(t *testing.T) {
 	reporter, ctrl := createFixtures(t)
 	subject := new(Subject)
