@@ -22,6 +22,15 @@ import (
 	mock_matcher "github.com/rafrombrc/gomock/gomock/mock_matcher"
 )
 
+type boolStringer bool
+
+func (b boolStringer) String() string {
+	if b {
+		return "hello"
+	}
+	return "bye"
+}
+
 func TestMatchers(t *testing.T) {
 	type e interface{}
 	type testCase struct {
@@ -34,6 +43,9 @@ func TestMatchers(t *testing.T) {
 		testCase{gomock.Nil(),
 			[]e{nil, (error)(nil), (chan bool)(nil), (*int)(nil)},
 			[]e{"", 0, make(chan bool), errors.New("err"), new(int)}},
+		testCase{gomock.Substr("hello"), []e{"hello", "hello world",
+			errors.New("gomock: hello there"), boolStringer(true)},
+			[]e{"bye", nil, int64(123), boolStringer(false)}},
 		testCase{gomock.Not(gomock.Eq(4)), []e{3, "blah", nil, int64(4)}, []e{4}},
 	}
 	for i, test := range tests {

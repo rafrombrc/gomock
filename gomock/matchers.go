@@ -17,6 +17,7 @@ package gomock
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 // A Matcher is a representation of a class of values.
@@ -27,6 +28,29 @@ type Matcher interface {
 
 	// String describes what the matcher matches.
 	String() string
+}
+
+type substrMatcher struct {
+	sub string
+}
+
+func (s substrMatcher) Matches(x interface{}) bool {
+	var str string
+	switch v := x.(type) {
+	case string:
+		str = v
+	case error:
+		str = v.Error()
+	case fmt.Stringer:
+		str = v.String()
+	default:
+		return false
+	}
+	return strings.Contains(str, s.sub)
+}
+
+func (s substrMatcher) String() string {
+	return fmt.Sprintf("contains %q", s.sub)
 }
 
 type anyMatcher struct{}
@@ -86,9 +110,10 @@ func (n notMatcher) String() string {
 }
 
 // Constructors
-func Any() Matcher             { return anyMatcher{} }
-func Eq(x interface{}) Matcher { return eqMatcher{x} }
-func Nil() Matcher             { return nilMatcher{} }
+func Any() Matcher              { return anyMatcher{} }
+func Eq(x interface{}) Matcher  { return eqMatcher{x} }
+func Nil() Matcher              { return nilMatcher{} }
+func Substr(sub string) Matcher { return substrMatcher{sub} }
 func Not(x interface{}) Matcher {
 	if m, ok := x.(Matcher); ok {
 		return notMatcher{m}
