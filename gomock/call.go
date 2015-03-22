@@ -210,7 +210,14 @@ func (c *Call) call(args []interface{}) (rets []interface{}, action func()) {
 	if c.doFunc.IsValid() {
 		doArgs := make([]reflect.Value, len(args))
 		ft := c.doFunc.Type()
-		for i := 0; i < ft.NumIn(); i++ {
+
+		// if variadic, count number of arguments manually
+		numIn := ft.NumIn()
+		if c.doFunc.Type().IsVariadic() {
+			numIn = len(args)
+		}
+
+		for i := 0; i < numIn; i++ {
 			if args[i] != nil {
 				doArgs[i] = reflect.ValueOf(args[i])
 			} else {
